@@ -1,0 +1,12 @@
+{
+  "cSpell.words": ["mochiba", "valibot"],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+    "^@radix-ui/.*$",
+    "^lucide-react$",
+    "^node_modules/.*$"
+  ],
+  "files.associations": {
+    "wrangler.json": "jsonc"
+  }
+}

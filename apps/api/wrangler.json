@@ -1,0 +1,37 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mochiba",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-02-04",
+  "compatibility_flags": ["nodejs_compat"],
+  "define": {
+    "DEBUG": "false"
+  },
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "../web/build/client",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "single-page-application"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mochiba",
+      "database_id": "2d9dd9dd-629b-44c9-ae90-f70740eb8d84",
+      "migrations_dir": "src/db/migrations"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "c08810e817544dd4b7a9c6fca6e13af5",
+      "preview_id": "c08810e817544dd4b7a9c6fca6e13af5"
+    }
+  ],
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1
+    }
+  }
+}

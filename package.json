@@ -1,0 +1,22 @@
+{
+  "name": "@mochiba/root",
+  "version": "0.0.0-dev",
+  "private": true,
+  "type": "module",
+  "description": "Cloudflare hosted email suite",
+  "scripts": {
+    "dev": "pnpm -r --parallel dev",
+    "build": "pnpm -r build",
+    "deploy": "pnpm --filter=@mochiba/api run deploy",
+    "format": "prettier --write ."
+  },
+  "author": "BlankParticle",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "prettier": "^3.4.2",
+    "prettier-plugin-sort-imports": "^1.8.6",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "typescript": "^5.7.3"
+  }
+}
