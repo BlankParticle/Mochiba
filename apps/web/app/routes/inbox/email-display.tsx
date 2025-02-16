@@ -36,7 +36,7 @@ export function EmailDisplay({ html }: { html: string }) {
       ref={iframeRef}
       className={cn("w-full flex-1 border-none transition-opacity duration-200")}
       title="Email Content"
-      sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+      sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-scripts"
       style={{
         width: "100%",
         overflow: "auto",

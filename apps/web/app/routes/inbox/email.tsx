@@ -179,6 +179,7 @@ export function MailDisplay({ id }: { id: string }) {
                   <AvatarImage alt={mail.from} />
                   <AvatarFallback>
                     {mail.from
+                      .split("<")[0]
                       .split(" ")
                       .map((chunk) => chunk[0])
                       .join("")}

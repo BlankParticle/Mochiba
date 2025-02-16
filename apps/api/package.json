@@ -18,18 +18,18 @@
     "@libsql/client": "^0.14.0",
     "@trpc/client": "11.0.0-rc.748",
     "@trpc/server": "11.0.0-rc.748",
-    "better-auth": "^1.1.16",
-    "drizzle-orm": "^0.39.2",
-    "hono": "^4.7.0",
+    "better-auth": "^1.1.18",
+    "drizzle-orm": "^0.39.3",
+    "hono": "^4.7.1",
     "postal-mime": "^2.4.3",
     "sanitize-html": "^2.14.0",
     "superjson": "^2.2.2",
     "valibot": "1.0.0-beta.15"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250204.0",
+    "@cloudflare/workers-types": "^4.20250214.0",
     "@types/sanitize-html": "^2.13.0",
     "drizzle-kit": "^0.30.4",
-    "wrangler": "^3.107.3"
+    "wrangler": "^3.109.1"
   }
 }

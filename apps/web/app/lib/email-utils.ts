@@ -10,6 +10,13 @@ export const template = (html: string) => {
   template.body.style.backgroundColor = getComputedStyle(document.body).getPropertyValue(
     "background-color",
   );
+
+  template.querySelectorAll("a").forEach((a) => {
+    if (a.href || !a.textContent) return;
+    if (URL.canParse(a.textContent)) a.href = a.textContent;
+    else if (a.textContent.includes("@")) a.href = `mailto:${a.textContent}`;
+  });
+
   const quoteElements = [
     ".gmail_quote",
     "blockquote",

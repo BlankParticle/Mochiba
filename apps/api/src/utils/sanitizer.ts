@@ -7,4 +7,5 @@ export const sanitizeEmail = (html: string) =>
     allowedTags: defaults.allowedTags.concat(["img", "style"]),
     allowVulnerableTags: true,
     allowedAttributes: false,
+    disallowedTagsMode: "completelyDiscard",
   });
