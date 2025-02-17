@@ -8,4 +8,5 @@ export const sanitizeEmail = (html: string) =>
     allowVulnerableTags: true,
     allowedAttributes: false,
     disallowedTagsMode: "completelyDiscard",
+    allowedSchemes: ["http", "https", "mailto", "cid"],
   });

@@ -20,7 +20,6 @@ import { nextSaturday } from "date-fns/nextSaturday";
 import { Button } from "@web/components/ui/button";
 import { Switch } from "@web/components/ui/switch";
 import { Label } from "@web/components/ui/label";
-import { template } from "@web/lib/email-utils";
 import { EmailDisplay } from "./email-display";
 import { addHours } from "date-fns/addHours";
 import type { Route } from "./+types/email";
@@ -201,7 +200,7 @@ export function MailDisplay({ id }: { id: string }) {
             </div>
             <Separator />
             <Suspense fallback={<div>Loading...</div>}>
-              <EmailDisplay html={mail.bodyHtml} />
+              <EmailDisplay html={mail.bodyHtml} emailId={mail.id} />
             </Suspense>
             <Separator className="mt-auto" />
             <div className="p-4">

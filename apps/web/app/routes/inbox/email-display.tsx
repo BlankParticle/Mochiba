@@ -3,12 +3,12 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { cn } from "@web/lib/utils";
 
-export function EmailDisplay({ html }: { html: string }) {
+export function EmailDisplay({ html, emailId }: { html: string; emailId: number }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState(300);
   const { resolvedTheme } = useTheme();
 
-  const iframeDoc = useMemo(() => template(html), [html]);
+  const iframeDoc = useMemo(() => template(html, emailId), [html, emailId]);
 
   useEffect(() => {
     if (!iframeRef.current) return;

@@ -1,7 +1,7 @@
 import { EMAIL_HTML_TEMPLATE } from "./constants";
 import Color from "color";
 
-export const template = (html: string) => {
+export const template = (html: string, emailId: number) => {
   const htmlParser = new DOMParser();
   const doc = htmlParser.parseFromString(html, "text/html");
   const template = htmlParser.parseFromString(EMAIL_HTML_TEMPLATE, "text/html");
@@ -11,11 +11,20 @@ export const template = (html: string) => {
     "background-color",
   );
 
-  template.querySelectorAll("a").forEach((a) => {
-    if (a.href || !a.textContent) return;
+  for (const img of template.querySelectorAll("img")) {
+    if (!img.src) continue;
+    if (img.src.startsWith(window.location.origin)) continue;
+    if (img.src.startsWith("http"))
+      img.src = `${window.location.origin}/api/attachment-proxy/${encodeURIComponent(img.src)}`;
+    if (img.src.startsWith("cid:"))
+      img.src = `${window.location.origin}/api/attachment/${emailId}/${img.src.replace("cid:", "")}`;
+  }
+
+  for (const a of template.querySelectorAll("a")) {
+    if (a.href || !a.textContent) continue;
     if (URL.canParse(a.textContent)) a.href = a.textContent;
     else if (a.textContent.includes("@")) a.href = `mailto:${a.textContent}`;
-  });
+  }
 
   const quoteElements = [
     ".gmail_quote",

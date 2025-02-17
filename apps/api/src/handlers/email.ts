@@ -1,12 +1,15 @@
-import { email, emailRules, thread } from "@api/db/schema";
-import { sanitizeEmail } from "@api/utils/sanitizer";
+import { email, emailAttachment, emailRules, thread } from "@api/db/schema";
+import { sanitizeEmail, sanitizeFilename } from "@api/utils/sanitizer";
+import { attachmentStorage } from "@api/utils/attachment-storage";
 import { and, eq, inArray } from "drizzle-orm";
 import { createDrizzle } from "@api/db";
 import PostalMime from "postal-mime";
+import { Buffer } from "node:buffer";
 
 export const emailHandler: EmailExportedHandler<CloudflareBindings> = async (message, env) => {
   const { from, to, raw } = message;
   const db = createDrizzle(env.DB);
+  const storage = attachmentStorage(env);
 
   const parsedEmail = await PostalMime.parse(raw).catch(() => {
     message.setReject("Invalid Email");
@@ -92,18 +95,46 @@ export const emailHandler: EmailExportedHandler<CloudflareBindings> = async (mes
     threadId = newThread.id;
   }
 
-  await db.insert(email).values({
-    messageId: messageId,
-    from: `${parsedEmail.from.name} <${parsedEmail.from.address}>`,
-    to: parsedEmail.to.map((to) => `${to.name} <${to.address}>`).join(", "),
-    date: new Date(parsedEmail.date ?? Date.now()),
-    bodyHtml: messageBodyHtml,
-    bodyText: parsedEmail.text ?? "",
-    headers: parsedEmail.headers,
-    ownerId,
-    subject,
-    parentThreadId: threadId,
-    envelope: { from, to },
-  });
+  const [newEmail] = await db
+    .insert(email)
+    .values({
+      messageId,
+      from: `${parsedEmail.from.name} <${parsedEmail.from.address}>`,
+      to: parsedEmail.to.map((to) => `${to.name} <${to.address}>`).join(", "),
+      date: new Date(parsedEmail.date ?? Date.now()),
+      bodyHtml: messageBodyHtml,
+      bodyText: parsedEmail.text ?? "",
+      headers: parsedEmail.headers,
+      ownerId,
+      subject,
+      parentThreadId: threadId,
+      envelope: { from, to },
+    })
+    .returning();
+
   await db.update(thread).set({ updatedAt: new Date() }).where(eq(thread.id, threadId));
+
+  await Promise.all(
+    parsedEmail.attachments
+      .filter((a) => a.disposition !== null)
+      .map(async (attachment) => {
+        const fileId = attachment.contentId?.replace(/<|>/g, "") ?? "";
+
+        await db.insert(emailAttachment).values({
+          emailId: newEmail.id,
+          fileId,
+          contentType: attachment.mimeType ?? "application/octet-stream",
+          inline: attachment.disposition === "inline",
+        });
+
+        const content =
+          typeof attachment.content === "string"
+            ? attachment.encoding === "base64"
+              ? Buffer.from(attachment.content, "base64").buffer.slice()
+              : (new TextEncoder().encode(attachment.content).buffer.slice() as ArrayBuffer)
+            : attachment.content.slice();
+
+        await storage.set({ emailId: newEmail.id, data: content, fileId });
+      }),
+  );
 };

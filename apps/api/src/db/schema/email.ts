@@ -43,14 +43,30 @@ export const email = sqliteTable("email", {
     .$defaultFn(() => new Date()),
 });
 
-export const emailRelations = relations(email, ({ one }) => ({
+export const emailRelations = relations(email, ({ one, many }) => ({
   parentThread: one(thread, {
     fields: [email.parentThreadId],
     references: [thread.id],
   }),
+  attachments: many(emailAttachment),
   owner: one(user, {
     fields: [email.ownerId],
     references: [user.id],
+  }),
+}));
+
+export const emailAttachment = sqliteTable("email_attachment", {
+  id: integer().primaryKey({ autoIncrement: true }),
+  emailId: integer().notNull(),
+  fileId: text().notNull(),
+  contentType: text().notNull(),
+  inline: integer({ mode: "boolean" }).notNull().default(false),
+});
+
+export const emailAttachmentRelations = relations(emailAttachment, ({ one }) => ({
+  email: one(email, {
+    fields: [emailAttachment.emailId],
+    references: [email.id],
   }),
 }));
 
