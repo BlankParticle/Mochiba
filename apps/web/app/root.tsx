@@ -19,7 +19,11 @@ export function meta({}: Route.MetaArgs) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className="bg-background text-foreground h-full max-h-svh overflow-hidden antialiased"
+      suppressHydrationWarning
+    >
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,7 +33,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="flex flex-1 flex-col">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

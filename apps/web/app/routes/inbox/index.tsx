@@ -18,13 +18,13 @@ export async function clientLoader() {
 export default function Home({ params: { inbox, id } }: Route.ClientLoaderArgs) {
   const { session } = useLoaderData<typeof clientLoader>();
   return (
-    <div className="bg-background flex h-full flex-col">
+    <>
       <Navbar session={session} />
       <main className="flex flex-1">
         <AppSidebar active={inbox} />
         <EmailList id={id ?? null} />
         <Outlet />
       </main>
-    </div>
+    </>
   );
 }

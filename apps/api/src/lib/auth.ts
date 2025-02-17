@@ -23,7 +23,6 @@ export const createAuth = (c: Context<HonoCtx>) =>
     logger: {
       disabled: true,
     },
-    trustedOrigins: ["*"],
   });
 
 export type AuthHandler = ReturnType<typeof createAuth>;

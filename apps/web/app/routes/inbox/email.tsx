@@ -26,7 +26,6 @@ import type { Route } from "./+types/email";
 import { addDays } from "date-fns/addDays";
 import { format } from "date-fns/format";
 import { trpc } from "@web/lib/trpc";
-import { Suspense } from "react";
 
 export default function Email({ params }: Route.ClientLoaderArgs) {
   if (!params.id) return null;
@@ -44,7 +43,7 @@ export function MailDisplay({ id }: { id: string }) {
 
   if (!mail) return null;
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex h-[calc(100svh-4rem)] w-full flex-col">
       <div className="flex items-center p-2">
         <div className="flex items-center gap-2">
           <Tooltip>
@@ -169,60 +168,59 @@ export function MailDisplay({ id }: { id: string }) {
         </DropdownMenu>
       </div>
       <Separator />
-      {mail.emails ? (
-        mail.emails.map((mail) => (
-          <div className="flex flex-1 flex-col" key={mail.messageId}>
-            <div className="flex items-start p-4">
-              <div className="flex items-start gap-4 text-sm">
-                <Avatar>
-                  <AvatarImage alt={mail.from} />
-                  <AvatarFallback>
-                    {mail.from
-                      .split("<")[0]
-                      .split(" ")
-                      .map((chunk) => chunk[0])
-                      .join("")}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="grid gap-1">
-                  <div className="font-semibold">{mail.from}</div>
-                  <div className="line-clamp-1 text-xs">{mail.subject}</div>
-                  <div className="line-clamp-1 text-xs">
-                    <span className="font-medium">Reply-To:</span> {mail.from}
-                  </div>
-                </div>
+
+      <div className="flex flex-1 flex-col overflow-y-auto">
+        <div className="flex items-start p-4">
+          <div className="flex items-start gap-4 text-sm">
+            <Avatar>
+              <AvatarImage alt={mail.emails[0].from} />
+              <AvatarFallback>
+                {mail.emails[0].from
+                  .split("<")[0]
+                  .split(" ")
+                  .map((chunk) => chunk[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
+            <div className="grid gap-1">
+              <div className="font-semibold">{mail.emails[0].from}</div>
+              <div className="line-clamp-1 text-xs">{mail.emails[0].subject}</div>
+              <div className="line-clamp-1 text-xs">
+                <span className="font-medium">Reply-To:</span> {mail.emails[0].from}
               </div>
-              {mail.date && (
-                <div className="text-muted-foreground ml-auto text-xs">
-                  {format(new Date(mail.date), "PPpp")}
-                </div>
-              )}
-            </div>
-            <Separator />
-            <Suspense fallback={<div>Loading...</div>}>
-              <EmailDisplay html={mail.bodyHtml} emailId={mail.id} />
-            </Suspense>
-            <Separator className="mt-auto" />
-            <div className="p-4">
-              <form>
-                <div className="grid gap-4">
-                  <Textarea className="p-4" placeholder={`Reply ${mail.from}...`} />
-                  <div className="flex items-center">
-                    <Label htmlFor="mute" className="flex items-center gap-2 text-xs font-normal">
-                      <Switch id="mute" aria-label="Mute thread" /> Mute this thread
-                    </Label>
-                    <Button onClick={(e) => e.preventDefault()} size="sm" className="ml-auto">
-                      Send
-                    </Button>
-                  </div>
-                </div>
-              </form>
             </div>
           </div>
-        ))
-      ) : (
-        <div className="text-muted-foreground p-8 text-center">No message selected</div>
-      )}
+          {mail.emails[0].date && (
+            <div className="text-muted-foreground ml-auto text-xs">
+              {format(new Date(mail.emails[0].date), "PPpp")}
+            </div>
+          )}
+        </div>
+        <Separator />
+        <div className="flex-1 overflow-y-auto">
+          <div className="flex w-full flex-col items-center gap-2">
+            {mail.emails.map((email) => (
+              <EmailDisplay html={email.bodyHtml} emailId={email.id} key={email.id} />
+            ))}
+          </div>
+        </div>
+        <Separator className="mt-auto" />
+        <div className="p-4">
+          <form>
+            <div className="grid gap-4">
+              <Textarea className="p-4" placeholder={`Reply ${mail.emails[0].from}...`} />
+              <div className="flex items-center">
+                <Label htmlFor="mute" className="flex items-center gap-2 text-xs font-normal">
+                  <Switch id="mute" aria-label="Mute thread" /> Mute this thread
+                </Label>
+                <Button onClick={(e) => e.preventDefault()} size="sm" className="ml-auto">
+                  Send
+                </Button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }
